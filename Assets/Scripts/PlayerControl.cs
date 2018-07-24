@@ -17,7 +17,7 @@ public class PlayerControl : MonoBehaviour {
     private float scopeRotSpeed = 1;
     private float scopeMoveSpeed = 0.1f;
     private float scopeMaxLen = 10;
-    public float fireForce = 1000;
+    public float fireForce = 100000;
     public float playerHeight;
     Rigidbody2D bullet;
 
@@ -62,21 +62,8 @@ public class PlayerControl : MonoBehaviour {
     }
 
     private void handleInput() {
-        if (Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.D))
-            baseState = BaseState.MOVE;
-        else
-            baseState = BaseState.IDLE;
-        
-        if (Input.GetKeyDown(KeyCode.Space) || !isGrounded())
-            additionalState = AdditionalState.JUMP;
-        else if (Input.GetKey(KeyCode.LeftControl) && isGrounded()) 
-            additionalState = AdditionalState.SIT;
-        else if (isGrounded())
-            additionalState = AdditionalState.NONE;
-
-        if (Input.GetKeyDown(KeyCode.F))
-
-            attacks = true;
+        movement();
+        aiming();
     }
 
     private void handleState() {
@@ -149,8 +136,12 @@ public class PlayerControl : MonoBehaviour {
 
     void aiming()
     {
+
+        if (Input.GetKeyDown(KeyCode.F))
+            attacks = true;
+
         if (isFacingRight)
-            scoper.transform.position = new Vector2(rigidbody.transform.position.x + scoperLen * Mathf.Cos(scoperAng * 0.0174533f), rigidbody.transform.position.y + scoperLen * Mathf.Sin(scoperAng * 0.0174533f));
+            scoper.transform.position = new Vector2(this.rigidbody.transform.position.x + scoperLen * Mathf.Cos(scoperAng * 0.0174533f), this.rigidbody.transform.position.y + scoperLen * Mathf.Sin(scoperAng * 0.0174533f));
         if (!isFacingRight)
             scoper.transform.position = new Vector2(rigidbody.transform.position.x - scoperLen * Mathf.Cos(scoperAng * 0.0174533f), rigidbody.transform.position.y + scoperLen * Mathf.Sin(scoperAng * 0.0174533f));
         if ((Input.GetKey(KeyCode.Q) && (scoperAng < 90)))
@@ -171,12 +162,25 @@ public class PlayerControl : MonoBehaviour {
             curSlot = slot3;
 
         if ((Input.GetKeyDown(KeyCode.G)) && (isFacingRight))
-        {
             Instantiate(curSlot, new Vector2(this.transform.position.x, this.transform.position.y), Quaternion.identity).AddForce((Vector2.up * Mathf.Sin(scoperAng * 0.0174533f) + Vector2.right * Mathf.Cos(scoperAng * 0.0174533f)) * fireForce);
-        }
         if ((Input.GetKeyDown(KeyCode.G)) && (!isFacingRight))
-        {
             Instantiate(curSlot, new Vector2(this.transform.position.x, this.transform.position.y), Quaternion.identity).AddForce((Vector2.up * Mathf.Sin(scoperAng * 0.0174533f) + Vector2.left * Mathf.Cos(scoperAng * 0.0174533f)) * fireForce);
-        }
+      
+    }
+
+    void movement()
+    {
+        if (Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.D))
+            baseState = BaseState.MOVE;
+        else
+            baseState = BaseState.IDLE;
+
+        if (Input.GetKeyDown(KeyCode.Space) || !isGrounded())
+            additionalState = AdditionalState.JUMP;
+        else if (Input.GetKey(KeyCode.LeftControl) && isGrounded())
+            additionalState = AdditionalState.SIT;
+        else if (isGrounded())
+            additionalState = AdditionalState.NONE;
+
     }
 }
