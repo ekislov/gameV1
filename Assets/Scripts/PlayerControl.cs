@@ -16,7 +16,7 @@ public class PlayerControl : MonoBehaviour {
     private float scoperAng = 0;
     private float scopeRotSpeed = 1;
     private float scopeMoveSpeed = 0.1f;
-    private float scopeMaxLen = 10;
+    private float scopeMaxLen = 50;
     public float fireForce = 100000;
     public float playerHeight;
     Rigidbody2D bullet;
@@ -162,9 +162,9 @@ public class PlayerControl : MonoBehaviour {
             curSlot = slot3;
 
         if ((Input.GetKeyDown(KeyCode.G)) && (isFacingRight))
-            Instantiate(curSlot, new Vector2(this.transform.position.x, this.transform.position.y), Quaternion.identity).AddForce((Vector2.up * Mathf.Sin(scoperAng * 0.0174533f) + Vector2.right * Mathf.Cos(scoperAng * 0.0174533f)) * fireForce);
+            Instantiate(curSlot, new Vector2(this.transform.position.x+playerHeight/2.0f, this.transform.position.y), Quaternion.identity).AddForce((Vector2.up * Mathf.Sin(scoperAng * 0.0174533f) + Vector2.right * Mathf.Cos(scoperAng * 0.0174533f)) * fireForce);
         if ((Input.GetKeyDown(KeyCode.G)) && (!isFacingRight))
-            Instantiate(curSlot, new Vector2(this.transform.position.x, this.transform.position.y), Quaternion.identity).AddForce((Vector2.up * Mathf.Sin(scoperAng * 0.0174533f) + Vector2.left * Mathf.Cos(scoperAng * 0.0174533f)) * fireForce);
+            Instantiate(curSlot, new Vector2(this.transform.position.x-playerHeight/2.0f, this.transform.position.y), Quaternion.identity).AddForce((Vector2.up * Mathf.Sin(scoperAng * 0.0174533f) + Vector2.left * Mathf.Cos(scoperAng * 0.0174533f)) * fireForce);
       
     }
 
