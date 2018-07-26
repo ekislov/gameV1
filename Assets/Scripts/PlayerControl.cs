@@ -6,25 +6,26 @@ public class PlayerControl : MonoBehaviour {
     public Rigidbody2D rigidbody;
     public Transform groundCheck;
     public LayerMask groundMask;
+    public Rigidbody2D bullet;
+    public GameObject scoper;
 
     private float jumpDirection;
     private float direction;
 
     private int speed = 20;
     private int jumpSpeed = 100;
+
+    private bool isFacingRight = true;
+    private bool attacks;
+
     private float scoperLen = 3;
     private float scoperAng = 0;
     private float scopeRotSpeed = 1;
     private float scopeMoveSpeed = 0.1f;
     private float scopeMaxLen = 50;
-    public float fireForce = 100000;
-    public float playerHeight;
-    Rigidbody2D bullet;
-
-    private bool isFacingRight = true;
-    GameObject scoper;
-    private bool attacks;
-
+    private float fireForce = 100000;
+    private float playerHeight;
+    private const float angleRealtion = 0.0174533f;
 
     private Rigidbody2D curSlot, slot1, slot2, slot3;
     public Rigidbody2D weapon1, weapon2, weapon3;
@@ -141,9 +142,9 @@ public class PlayerControl : MonoBehaviour {
             attacks = true;
 
         if (isFacingRight)
-            scoper.transform.position = new Vector2(this.rigidbody.transform.position.x + scoperLen * Mathf.Cos(scoperAng * 0.0174533f), this.rigidbody.transform.position.y + scoperLen * Mathf.Sin(scoperAng * 0.0174533f));
+            scoper.transform.position = new Vector2(this.rigidbody.transform.position.x + scoperLen * Mathf.Cos(scoperAng * angleRealtion), this.rigidbody.transform.position.y + scoperLen * Mathf.Sin(scoperAng * angleRealtion));
         if (!isFacingRight)
-            scoper.transform.position = new Vector2(rigidbody.transform.position.x - scoperLen * Mathf.Cos(scoperAng * 0.0174533f), rigidbody.transform.position.y + scoperLen * Mathf.Sin(scoperAng * 0.0174533f));
+            scoper.transform.position = new Vector2(rigidbody.transform.position.x - scoperLen * Mathf.Cos(scoperAng * angleRealtion), rigidbody.transform.position.y + scoperLen * Mathf.Sin(scoperAng * angleRealtion));
         if ((Input.GetKey(KeyCode.Q) && (scoperAng < 90)))
             scoperAng+=scopeRotSpeed;
         if ((Input.GetKey(KeyCode.E) && (scoperAng > -90)))
@@ -161,10 +162,11 @@ public class PlayerControl : MonoBehaviour {
         if (Input.GetKeyDown(KeyCode.Alpha3))
             curSlot = slot3;
 
-        if ((Input.GetKeyDown(KeyCode.G)) && (isFacingRight))
-            Instantiate(curSlot, new Vector2(this.transform.position.x+playerHeight/2.0f, this.transform.position.y), Quaternion.identity).AddForce((Vector2.up * Mathf.Sin(scoperAng * 0.0174533f) + Vector2.right * Mathf.Cos(scoperAng * 0.0174533f)) * fireForce);
-        if ((Input.GetKeyDown(KeyCode.G)) && (!isFacingRight))
-            Instantiate(curSlot, new Vector2(this.transform.position.x-playerHeight/2.0f, this.transform.position.y), Quaternion.identity).AddForce((Vector2.up * Mathf.Sin(scoperAng * 0.0174533f) + Vector2.left * Mathf.Cos(scoperAng * 0.0174533f)) * fireForce);
+        int bulletDirection = isFacingRight ? 1 : -1;
+
+        if (Input.GetKeyDown(KeyCode.G))
+            Instantiate(curSlot, new Vector2(this.transform.position.x + bulletDirection * playerHeight/2.0f, this.transform.position.y), Quaternion.identity)
+                .AddForce((Vector2.up * Mathf.Sin(scoperAng * angleRealtion) + bulletDirection * Vector2.right * Mathf.Cos(scoperAng * angleRealtion)) * fireForce);
       
     }
 
