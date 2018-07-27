@@ -23,7 +23,7 @@ GameObject:
   - component: {fileID: 50733367107964894}
   - component: {fileID: 58446956537176082}
   m_Layer: 0
-  m_Name: water
+  m_Name: Water
   m_TagString: Bullet
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
