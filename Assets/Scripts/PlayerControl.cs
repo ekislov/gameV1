@@ -4,6 +4,8 @@ public class PlayerControl : MonoBehaviour {
 
     public Animator animator;
     public Rigidbody2D rigidbody;
+    public BoxCollider2D hitbox; // on triger check if attacked
+    public BoxCollider2D groundCollider; 
 
     private float jumpDirection;
     private float direction;
@@ -12,35 +14,35 @@ public class PlayerControl : MonoBehaviour {
     private float playerWidth;
 
     private int speed = 20;
-    private int jumpForce = 8000;
+    private int jumpForce = 2000;
 
     private bool isFacingRight = true;
     private bool attacks;
-    private bool isGrounded;
+
+    public bool isGrounded;
 
     private Vector2 moveVector = new Vector2();
 
-    private enum BaseState {
+    public enum BaseState {
         IDLE,
         MOVE
     }
 
-    private enum AdditionalState {
+    public enum AdditionalState {
         NONE,
         JUMP,
         SIT
     }
 
-    private BaseState baseState;
-    private AdditionalState additionalState;
+    public BaseState baseState;
+    public AdditionalState additionalState;
 
     private void Start() {
         playerHeight = GetComponent<SpriteRenderer>().size.y * transform.localScale.y;
     }
 
     void FixedUpdate() {
-        playerWidth = System.Math.Abs(GetComponent<SpriteRenderer>().bounds.size.x / transform.lossyScale.x);
-
+        changeColliderSize();
         handleInput();
         handleState();
     }
@@ -57,7 +59,7 @@ public class PlayerControl : MonoBehaviour {
         handleAdditionalState();
         handleBaseState();
 
-        //moveVector.y = rigidbody.velocity.y;
+        moveVector.y = rigidbody.velocity.y;
         rigidbody.velocity = moveVector;
     }
 
@@ -69,8 +71,7 @@ public class PlayerControl : MonoBehaviour {
     private void handleJump() {
         jumpDirection = direction;
         if (isGrounded && !attacks)
-            rigidbody.AddForce(new Vector2(0, jumpForce));
-
+            rigidbody.AddForce(new Vector2(0, jumpForce), ForceMode2D.Force);
     }
 
     private void handleBaseState() {
@@ -93,21 +94,23 @@ public class PlayerControl : MonoBehaviour {
         attacks = false;
     }
 
-    void OnTriggerStay2D(Collider2D other)
-    {
-        Debug.Log("Stay");
-        if (other.gameObject.tag == "Ground")
+    void OnTriggerEnter2D(Collider2D other) {
+        if (other.gameObject.tag == "Ground" || other.gameObject.tag == "Enemy")
             isGrounded = true;     
     }
 
-    void OnTriggerExit2D(Collider2D other)
+    void OnTriggerStay2D(Collider2D other)
     {
-        Debug.Log("Exit");
-        if (other.gameObject.tag == "Ground")
+        if (other.gameObject.tag == "Ground" || other.gameObject.tag == "Enemy")
+            isGrounded = true;
+    }
+
+    void OnTriggerExit2D(Collider2D other) {
+        if (other.gameObject.tag == "Ground" || other.gameObject.tag == "Enemy")
         isGrounded = false;
     }
 
-    void handleMoveInput()
+    private void handleMoveInput()
     {
         if (Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.D))
             baseState = BaseState.MOVE;
@@ -120,5 +123,11 @@ public class PlayerControl : MonoBehaviour {
             additionalState = AdditionalState.SIT;
         else if (isGrounded)
             additionalState = AdditionalState.NONE;
+    }
+
+    private void changeColliderSize() {
+        playerWidth = System.Math.Abs(GetComponent<SpriteRenderer>().bounds.size.x / transform.lossyScale.x);
+        hitbox.size = new Vector2(playerWidth, hitbox.size.y);
+        groundCollider.size = new Vector2(playerWidth * 0.98f, groundCollider.size.y);
     }
 }
