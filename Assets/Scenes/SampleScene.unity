@@ -4785,6 +4785,7 @@ MonoBehaviour:
   rigidbody: {fileID: 1181566432}
   hitbox: {fileID: 1181566430}
   groundCollider: {fileID: 1181566436}
+  runCollider: {fileID: 1181566435}
   isGrounded: 0
   baseState: 0
   additionalState: 0

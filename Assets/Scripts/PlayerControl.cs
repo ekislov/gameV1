@@ -5,16 +5,19 @@ public class PlayerControl : MonoBehaviour {
     public Animator animator;
     public Rigidbody2D rigidbody;
     public BoxCollider2D hitbox; // on triger check if attacked
-    public BoxCollider2D groundCollider; 
+    public BoxCollider2D groundCollider; // ground collider
+    public BoxCollider2D runCollider; // controls wall collisions while running
 
     private float jumpDirection;
     private float direction;
 
     private float playerHeight;
+    private float idleHeight;
     private float playerWidth;
 
     private int speed = 20;
     private int jumpForce = 2000;
+    private float crouchSlowDown = 0.75f;
 
     private bool isFacingRight = true;
     private bool attacks;
@@ -31,14 +34,14 @@ public class PlayerControl : MonoBehaviour {
     public enum AdditionalState {
         NONE,
         JUMP,
-        SIT
+        CROUCH
     }
 
     public BaseState baseState;
     public AdditionalState additionalState;
 
     private void Start() {
-        playerHeight = GetComponent<SpriteRenderer>().size.y * transform.localScale.y;
+        playerHeight = idleHeight = hitbox.size.y;
     }
 
     void FixedUpdate() {
@@ -66,12 +69,20 @@ public class PlayerControl : MonoBehaviour {
     private void handleAdditionalState() {
         if (additionalState == AdditionalState.JUMP)
             handleJump();
+        if (additionalState == AdditionalState.CROUCH)
+            handleCrouch();
+        else
+            playerHeight = idleHeight;
     }
 
     private void handleJump() {
         jumpDirection = direction;
         if (isGrounded && !attacks)
             rigidbody.AddForce(new Vector2(0, jumpForce), ForceMode2D.Force);
+    }
+
+    private void handleCrouch() {
+        playerHeight = GetComponent<SpriteRenderer>().bounds.size.y / transform.lossyScale.y;
     }
 
     private void handleBaseState() {
@@ -117,17 +128,20 @@ public class PlayerControl : MonoBehaviour {
         else
             baseState = BaseState.IDLE;
 
-        if (Input.GetKeyDown(KeyCode.Space) || !isGrounded)
+        if ((Input.GetKeyDown(KeyCode.Space) || !isGrounded) && additionalState != AdditionalState.CROUCH)
             additionalState = AdditionalState.JUMP;
-        else if (Input.GetKey(KeyCode.LeftControl) && isGrounded)
-            additionalState = AdditionalState.SIT;
+        else if (Input.GetKey(KeyCode.C) && isGrounded)
+            additionalState = AdditionalState.CROUCH;
         else if (isGrounded)
             additionalState = AdditionalState.NONE;
     }
 
     private void changeColliderSize() {
         playerWidth = System.Math.Abs(GetComponent<SpriteRenderer>().bounds.size.x / transform.lossyScale.x);
-        hitbox.size = new Vector2(playerWidth, hitbox.size.y);
-        groundCollider.size = new Vector2(playerWidth * 0.98f, groundCollider.size.y);
+        hitbox.size = new Vector2(playerWidth, playerHeight);
+        groundCollider.size = new Vector2(Mathf.Max(playerWidth, runCollider.size.x) * 0.98f, groundCollider.size.y);
+        groundCollider.offset = new Vector2(0, -hitbox.size.y / 2);
+
+        runCollider.size = new Vector2(runCollider.size.x, playerHeight);
     }
 }
