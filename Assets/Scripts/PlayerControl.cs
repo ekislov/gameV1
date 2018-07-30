@@ -7,6 +7,7 @@ public class PlayerControl : MonoBehaviour {
     public BoxCollider2D hitbox; // on triger check if attacked
     public BoxCollider2D groundCollider; // ground collider
     public BoxCollider2D runCollider; // controls wall collisions while running
+    public LayerMask groundMask;
 
     private float jumpDirection;
     private float direction;
@@ -23,6 +24,8 @@ public class PlayerControl : MonoBehaviour {
     private bool attacks;
 
     public bool isGrounded;
+
+    public bool stands;
 
     private Vector2 moveVector = new Vector2();
 
@@ -48,6 +51,8 @@ public class PlayerControl : MonoBehaviour {
         changeColliderSize();
         handleInput();
         handleState();
+
+        stands = isPossibleStand();
     }
 
     private void handleInput() {
@@ -128,20 +133,32 @@ public class PlayerControl : MonoBehaviour {
         else
             baseState = BaseState.IDLE;
 
-        if ((Input.GetKeyDown(KeyCode.Space) || !isGrounded) && additionalState != AdditionalState.CROUCH)
+        if ((Input.GetKeyDown(KeyCode.Space) || !isGrounded) && additionalState != AdditionalState.CROUCH && isPossibleStand())
             additionalState = AdditionalState.JUMP;
         else if (Input.GetKey(KeyCode.C) && isGrounded)
             additionalState = AdditionalState.CROUCH;
-        else if (isGrounded)
+        else if (isGrounded && isPossibleStand())
             additionalState = AdditionalState.NONE;
     }
 
     private void changeColliderSize() {
         playerWidth = System.Math.Abs(GetComponent<SpriteRenderer>().bounds.size.x / transform.lossyScale.x);
         hitbox.size = new Vector2(playerWidth, playerHeight);
-        groundCollider.size = new Vector2(Mathf.Max(playerWidth, runCollider.size.x) * 0.98f, groundCollider.size.y);
+        groundCollider.size = new Vector2(Mathf.Max(playerWidth, runCollider.size.x) * 0.99f, groundCollider.size.y);
         groundCollider.offset = new Vector2(0, -hitbox.size.y / 2);
 
         runCollider.size = new Vector2(runCollider.size.x, playerHeight);
+    }
+
+    bool isPossibleStand() {
+        float distance = (idleHeight / 2 + (idleHeight - playerHeight) / 2);
+
+        RaycastHit2D hit_c = Physics2D.Raycast(rigidbody.position, Vector2.up, distance, groundMask);
+        RaycastHit2D hit_r = Physics2D.Raycast(rigidbody.position + new Vector2(-playerWidth, 0) / 2.0f, Vector2.up, distance, groundMask);
+        RaycastHit2D hit_l = Physics2D.Raycast(rigidbody.position + new Vector2(+playerWidth, 0) / 2.0f, Vector2.up, distance, groundMask);
+
+        if (hit_c.collider != null && hit_r.collider != null && hit_l.collider != null)
+            return false;
+        return true;
     }
 }

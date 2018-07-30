@@ -4786,7 +4786,11 @@ MonoBehaviour:
   hitbox: {fileID: 1181566430}
   groundCollider: {fileID: 1181566436}
   runCollider: {fileID: 1181566435}
+  groundMask:
+    serializedVersion: 2
+    m_Bits: 512
   isGrounded: 0
+  stands: 0
   baseState: 0
   additionalState: 0
 --- !u!61 &1181566430
