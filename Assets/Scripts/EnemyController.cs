@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class enemy : MonoBehaviour {
+public class EnemyController : MonoBehaviour {
     public Rigidbody2D enemyO;
      public int hp;
 
