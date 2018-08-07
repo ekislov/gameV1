@@ -1715,7 +1715,9 @@ Prefab:
       propertyPath: platformMask.m_Bits
       value: 512
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 114194421939957964, guid: 534fc8b3629bf425cbe6caf8ed21876d, type: 2}
+    - {fileID: 114765680315448838, guid: 534fc8b3629bf425cbe6caf8ed21876d, type: 2}
   m_SourcePrefab: {fileID: 100100000, guid: 534fc8b3629bf425cbe6caf8ed21876d, type: 2}
   m_IsPrefabAsset: 0
 --- !u!1 &119715896
@@ -9332,6 +9334,39 @@ PolygonCollider2D:
       - {x: -0.19335938, y: -1.0791016}
       - {x: -0.125, y: -1.0771484}
       - {x: -0.072265625, y: -1.0712891}
+--- !u!1 &1344969071 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 1928671942942308, guid: 534fc8b3629bf425cbe6caf8ed21876d,
+    type: 2}
+  m_PrefabInternal: {fileID: 112327369}
+--- !u!114 &1344969072
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1344969071}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d7a248467cf324e88a7b667ef43a58e4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  baseState: 0
+  additionalState: 0
+--- !u!114 &1344969073
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1344969071}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5d50d0d5347da49eb85a9dc55f93ee4b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  platformMask:
+    serializedVersion: 2
+    m_Bits: 512
+  velocity: {x: 0, y: 0, z: 0}
 --- !u!1 &1389349089
 GameObject:
   m_ObjectHideFlags: 0
